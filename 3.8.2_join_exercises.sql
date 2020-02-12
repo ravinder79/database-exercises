@@ -154,7 +154,42 @@ LIMIT 1;
 
 
 
+/*Bonus Find the names of all current employees, their department name, and their current manager's name*/
+
+SELECT concat(employees.first_name, ' ',employees.last_name) AS Employee_name, concat(REF.first_name, ' ', REF.last_name)  AS manager_name, dept_name
+
+FROM dept_emp de
+JOIN dept_manager AS dm
+ON de.dept_no = dm.dept_no
+JOIN employees 
+ON  de.emp_no = employees.emp_no
+JOIN departments
+ON de.dept_no = departments.dept_no
+JOIN employees AS REF
+ON dm.emp_no = REF.emp_no
+WHERE now() BETWEEN de.from_date AND de.to_date
+AND  now() BETWEEN dm.from_date AND dm.to_date;
 
 
+
+
+
+/*Bonus Find the highest paid employee in each department.*/
+
+#SELECT f.FIRST_name, f.last_name, f.salary,
+#FROM 
+#(
+SELECT  dept_name, max(salary)
+FROM employees
+JOIN salaries
+ON salaries.emp_no = employees.emp_no
+JOIN dept_emp
+ON employees.emp_no = dept_emp.emp_no
+JOIN departments
+ON dept_emp.dept_no = departments.dept_no
+WHERE now() BETWEEN salaries.from_date AND salaries.to_date
+#ORDER BY salary;
+GROUP BY dept_name;
+#AS x INNER JOIN employees AS f ON f.first_name = x.first_name, f.last_name=x.last_name, f.salary = x.maxi;
 
 
