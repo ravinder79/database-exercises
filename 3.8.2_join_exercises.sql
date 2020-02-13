@@ -30,6 +30,7 @@ GROUP BY roles.name;
 
 /*employees database exercises*/
 
+/*write a query that shows each department along with the name of the current manager for that department.*/
 
 SELECT dept_name, concat (first_name, ' ', last_name)
 from departments
@@ -40,6 +41,9 @@ ON dept_manager.emp_no = employees.emp_no
 WHERE now() BETWEEN dept_manager.from_date AND dept_manager.to_date
 order by dept_name;
 
+
+
+/*Find the name of all departments currently managed by women.*/
 
 SELECT dept_name, concat (first_name, ' ', last_name)
 from departments
@@ -57,10 +61,15 @@ order by dept_name;
 
 SELECT title, count(*)
 FROM titles
-JOIN employees_with_departments
-ON titles.emp_no = employees_with_departments.emp_no
+
+JOIN dept_emp AS de
+ON titles.emp_no = de.emp_no
+JOIN departments
+ON de.dept_no = departments.dept_no
 WHERE dept_name LIKE "Customer Service" AND NOW() BETWEEN titles.from_date AND titles.to_date
+AND now() BETWEEN de.from_date AND de.to_date
 GROUP BY title;
+
 
 
 
@@ -174,12 +183,15 @@ AND  now() BETWEEN dm.from_date AND dm.to_date;
 
 
 
-/*Bonus Find the highest paid employee in each department.*/
 
-#SELECT f.FIRST_name, f.last_name, f.salary,
-#FROM 
-#(
-SELECT  dept_name, max(salary)
+/*Bonus Find the highest paid employee in each department.*/
+SELECT first_name, last_name, (SELECT max(salary) FROM salaries WHERE salaries.emp_no =  employees.emp_no) AS max_salary, (SELECT max(dept_no) FROM dept_emp WHERE dept_emp.emp_no = employees.emp_no) AS dept_number
+
+FROM employees WHERE emp_no IN
+
+(SELECT emp_no
+FROM salaries WHERE salary IN (
+SELECT max(salary) AS max_salary
 FROM employees
 JOIN salaries
 ON salaries.emp_no = employees.emp_no
@@ -188,8 +200,7 @@ ON employees.emp_no = dept_emp.emp_no
 JOIN departments
 ON dept_emp.dept_no = departments.dept_no
 WHERE now() BETWEEN salaries.from_date AND salaries.to_date
-#ORDER BY salary;
-GROUP BY dept_name;
-#AS x INNER JOIN employees AS f ON f.first_name = x.first_name, f.last_name=x.last_name, f.salary = x.maxi;
+AND now() BETWEEN dept_emp.from_date AND dept_emp.to_date
+GROUP BY dept_name));
 
 
