@@ -185,7 +185,7 @@ AND  now() BETWEEN dm.from_date AND dm.to_date;
 
 
 /*Bonus Find the highest paid employee in each department.*/
-SELECT first_name, last_name, (SELECT max(salary) FROM salaries WHERE salaries.emp_no =  employees.emp_no) AS max_salary, (SELECT max(dept_no) FROM dept_emp WHERE dept_emp.emp_no = employees.emp_no) AS dept_number
+SELECT first_name, last_name, (SELECT max(salary) FROM salaries WHERE salaries.emp_no =  employees.emp_no) AS max_salary, (SELECT max(dept_no) FROM dept_emp WHERE dept_emp.emp_no = employees.emp_no) AS dept_number, (SELECT max(dept_name) FROM departments WHERE departments.dept_no=dept_number) AS department_name
 
 FROM employees WHERE emp_no IN
 
@@ -201,6 +201,7 @@ JOIN departments
 ON dept_emp.dept_no = departments.dept_no
 WHERE now() BETWEEN salaries.from_date AND salaries.to_date
 AND now() BETWEEN dept_emp.from_date AND dept_emp.to_date
-GROUP BY dept_name));
+GROUP BY dept_name)AND now() BETWEEN salaries.from_date AND salaries.to_date);
+
 
 
