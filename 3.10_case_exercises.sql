@@ -44,8 +44,9 @@ FROM decades
 GROUP BY decade;
 
 
-/*What is the average salary for each of the following department groups: R&D, Sales & Marketing, Prod & QM, Finance & HR, Customer Service?*/
+/* BONUS What is the average salary for each of the following department groups: R&D, Sales & Marketing, Prod & QM, Finance & HR, Customer Service?*/
 
+/**first I created a table combining different dates in employees database*/
 CREATE TABLE avg_salary_group AS
 
 SELECT first_name,last_name,salary, dept_no, dept_name,emp_no FROM employees.employees
@@ -53,7 +54,7 @@ JOIN employees.dept_emp USING (emp_no)
 JOIN employees.departments USING (dept_no)
 JOIN employees.salaries USING (emp_no);
 
-
+/* Calcuated avg_salary for each group from table created above*/
 
 SELECT 
     AVG(CASE

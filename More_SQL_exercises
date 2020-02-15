@@ -20,3 +20,66 @@ AND (now() BETWEEN employees.dept_manager.from_date AND employees.dept_manager.t
 
 SELECT* FROM manager_salary
 JOIN avg_salary using (dept_no);
+
+/*Use the world database for the questions below.
+
+What languages are spoken in Santa Monica?*/
+
+
+SELECT LANGUAGE, Percentage FROM countrylanguage
+JOIN city USING (countrycode) 
+WHERE NAME LIKE "Santa Monica"
+ORDER BY percentage;
+
+
+/*How many different countries are in each region?*/
+
+SELECT region,count(NAME) FROM country
+GROUP BY Region
+ORDER BY count(name);
+
+
+/*What is the population for each region?*/
+
+SELECT region, sum(population) FROM country
+GROUP BY region
+ORDER BY sum(population) desc;
+
+
+
+/*What is the population for each continent?*/
+
+SELECT continent, sum(population) FROM country
+GROUP BY continent
+ORDER BY sum(population) DESC;
+
+
+
+
+/*What is the average life expectancy globally?*/
+SELECT  AVG(LifeExpectancy) FROM country;
+
+
+
+/*What is the average life expectancy for each region, each continent? Sort the results from shortest to longest*/
+
+SELECT  region,  AVG(lifeexpectancy) FROM country
+GROUP BY region
+ORDER BY AVG(lifeexpectancy) ASC;
+
+SELECT  continent, AVG(lifeexpectancy) FROM country
+GROUP BY continent
+ORDER BY AVG(lifeexpectancy) asc;
+
+/*Find all the countries whose local name is different from the official name*/
+
+SELECT NAME, LocalName FROM country
+WHERE NAME != LocalName
+
+
+/*How many countries have a life expectancy less than x?*/
+
+SELECT NAME, lifeexpectancy FROM country
+WHERE lifeexpectancy <55;
+
+
