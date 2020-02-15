@@ -1,0 +1,22 @@
+
+/*How much do the current managers of each department get paid, relative to the average salary for the department? Is there any department where the department manager gets paid less than the average salary?*/
+
+
+CREATE TABLE avg_salary AS
+SELECT dept_name, dept_no, AVG(salary) FROM employees.salaries
+JOIN employees.dept_emp USING (emp_no)
+JOIN employees.departments USING (dept_no)
+WHERE now() BETWEEN employees.salaries.from_date AND employees.salaries.to_date
+GROUP BY dept_name;
+
+
+CREATE TABLE manager_salary AS
+(SELECT dept_manager.dept_no, dept_manager.emp_no, salary AS manager_salary FROM employees.dept_manager
+LEFT JOIN employees.dept_emp ON dept_manager.emp_no = dept_emp.emp_no
+LEFT JOIN employees.salaries ON dept_manager.emp_no = salaries.emp_no
+WHERE (now() BETWEEN employees.salaries.from_date AND employees.salaries.to_date)
+AND (now() BETWEEN employees.dept_manager.from_date AND employees.dept_manager.to_date));
+
+
+SELECT* FROM manager_salary
+JOIN avg_salary using (dept_no);
