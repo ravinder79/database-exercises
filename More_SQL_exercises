@@ -114,6 +114,78 @@ WHERE country IN ('Afghanistan', 'Bangladeshes' ,'china');
 
 
 
+/*What is the average replacement cost of a film? Does this change depending on the rating of the film?*/
+
+SELECT rating, AVG(replacement_cost) FROM film
+GROUP BY rating;
 
 
 
+/*How many different films of each genre are in the database?*/
+
+SELECT category.name, count(*) FROM film
+JOIN film_category USING (film_id)
+JOIN category USING (category_id)
+GROUP BY category_id;
+
+
+/*What are the 5 frequently rented films?*/
+
+SELECT title, count(title) FROM film
+JOIN inventory USING (film_id)
+JOIN rental USING (inventory_id)
+GROUP BY title
+ORDER BY count(title) desc;
+
+
+
+/*What are the most most profitable films (in terms of gross revenue)?*/
+
+
+SELECT title, sum(amount) FROM payment
+JOIN rental USING (rental_id)
+JOIN inventory USING (inventory_id)
+JOIN film USING (film_id)
+GROUP BY title
+ORDER BY sum(amount) desc;
+
+
+/*Who is the best customer?*/
+SELECT customer_id, first_name, last_name, sum(amount) FROM customer 
+JOIN payment USING (customer_id)
+GROUP BY customer_id
+ORDER BY sum(amount) desc;
+
+
+/*Who are the most popular actors (that have appeared in the most films)?*/
+
+SELECT actor_id, first_name, last_name, count(actor_id) FROM actor
+JOIN film_actor USING (actor_id)
+JOIN film USING (film_id)
+GROUP BY actor_id
+ORDER BY count(actor_id) desc;
+
+
+/*What are the sales for each store for each month in 2005?*/
+
+SELECT  xyz.MONTH, xyz.store_id, sum(xyz.amount) AS  total_sales
+FROM (SELECT amount, store_id, rental_date,
+CASE WHEN YEAR(rental_date) = 2005 THEN MONTH(rental_date) END AS MONTH
+FROM payment
+JOIN rental USING (rental_id)
+JOIN staff ON staff.staff_id = rental.staff_id
+JOIN store USING (store_id)
+WHERE YEAR(rental_date)  = 2005) AS xyz
+
+GROUP BY xyz.month, xyz.store_id;
+
+
+
+/*Bonus: Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs.*/
+
+SELECT concat(first_name,' ', last_name), title, Phone FROM rental
+JOIN customer USING (customer_id)
+JOIN inventory USING (inventory_id)
+JOIN film USING (film_id)
+JOIN address USING (address_id)
+WHERE return_date IS NULL;

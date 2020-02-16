@@ -38,3 +38,4 @@ SELECT *
 FROM employees
 WHERE (hire_date BETWEEN '1990-01-01' AND '1999-12-31') AND (MONTH(birth_date) = 12) AND (DAY(birth_date) =25)
 ORDER BY birth_date DESC, hire_date DESC;
+
