@@ -113,6 +113,14 @@ SELECT country_id, country FROM country
 WHERE country IN ('Afghanistan', 'Bangladeshes' ,'china');
 
 
+/*WRITE a QUERY TO display how much business, IN dollars, EACH store brought IN*/
+
+SELECT store_id, sum(amount) FROM payment
+JOIN staff USING (staff_id)
+JOIN store USING (store_id)
+GROUP BY store_id;
+
+
 
 /*What is the average replacement cost of a film? Does this change depending on the rating of the film?*/
 
