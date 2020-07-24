@@ -69,4 +69,42 @@ WHERE last_name LIKE 'E%' AND last_name LIKE '%E';
 SELECT emp_no, first_name, last_name, datediff(curdate(), hire_date) AS days_with_company
 FROM employees
 WHERE hire_date LIKE '199%'
-AND birth_date LIKE '%-12-25'
+AND birth_date LIKE '%-12-25';
+
+/* Find the smallest and largest salary from the salaries table. */
+SELECT max(salary), min(salary) FROM salaries;
+
+/* Use your knowledge of built in SQL functions to generate a username for all of the employees. A username should be all lowercase, and consist of the first character of the employees first name, the first 4 characters of the employees last name, an underscore, the month the employee was born, and the last two digits of the year that they were born. */
+
+SELECT first_name, last_name, birth_date, lower(CONCAT(first_name, substr(last_name, 1,4), '_', substr(birth_date, 6,2), substr(birth_date,1,4))) AS 'username'
+FROM employees;
+
+SELECT
+    IFNULL(
+        (SELECT DISTINCT salary
+        FROM salaries
+        ORDER BY salary DESC
+        LIMIT 1 OFFSET 1
+        ), NULL) AS SecondHighestSalary
+FROM salaries
+LIMIT 1;
+
+SELECT IFNULL((SELECT salary
+FROM salaries
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1), NULL)
+FROM salaries
+LIMIT 1;
+
+SELECT salary, count
+FROM 
+ (SELECT salary, count(salary) AS count
+ FROM salaries
+ GROUP BY salary) AS s
+WHERE count >1 ;
+
+
+SELECT salary, count(salary) AS count FROM salaries
+GROUP BY salary
+HAVING count >1;
+
