@@ -157,4 +157,44 @@ WHERE dept_manager.to_date > now() AND salaries.to_date > now();
 
 SELECT dept_no, count(dept_no) FROM `dept_emp`
 WHERE to_date > now()
+GROUP BY dept_no;
+
+
+/* Which department has the highest average salary? Hint: Use current not historic information. */
+
+SELECT dept_no, AVG(salary) FROM salaries AS s
+JOIN dept_emp USING (emp_no)
+WHERE s.to_date > now() AND dept_emp.to_date > now()
 GROUP BY dept_no
+ORDER BY AVG(salary) DESC
+LIMIT 1;
+
+/* Who is the highest paid employee in the Marketing department? */
+
+SELECT first_name, last_name FROM employees
+JOIN salaries USING (emp_no)
+JOIN dept_emp USING (emp_no)
+WHERE dept_emp.dept_no = 'd001' AND dept_emp.to_date > now()
+ORDER BY salary DESC
+LIMIT 1;
+
+
+/* Which current department manager has the highest salary? */
+
+SELECT first_name, last_name, dept_no, salary FROM dept_manager AS d
+LEFT JOIN salaries ON d.emp_no = salaries.emp_no
+LEFT JOIN employees ON d.emp_no = employees.emp_no
+WHERE d.to_date > now() AND salaries.to_date > now()
+ORDER BY salary DESC
+LIMIT 1;
+
+
+/* Find the highest paid employee in each department. */
+SELECT * FROM employees AS e
+JOIN salaries s ON e.emp_no = s.emp_no
+JOIN dept_emp d ON e.emp_no = d.emp_no
+WHERE d.to_date > now() AND s.to_date > now() AND (dept_no, salary) IN 
+(SELECT dept_no, max(salary) FROM employees e1
+JOIN salaries s1 ON e1.emp_no = s1.emp_no
+JOIN dept_emp d1 ON e1.emp_no = d1.emp_no
+GROUP BY d1.dept_no);
