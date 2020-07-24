@@ -108,3 +108,53 @@ SELECT salary, count(salary) AS count FROM salaries
 GROUP BY salary
 HAVING count >1;
 
+/* 
+PROBLEM #3: Rising Temperature
+Given a Weather table, write a SQL query to find all dates' Ids with higher temperature compared to its previous (yesterday's) dates. */
+
+SELECT a.ID
+FROM weather a weather b
+WHERE a.temp > b.temp AND datediff(a.recorddate, b.recorddate) = 1;
+
+/* /highest salary from each department */
+SELECT emp_no, salary, dept_no FROM employees
+JOIN salaries USING (emp_no)
+JOIN dept_emp USING (emp_no)
+WHERE emp_no IN (SELECT );
+
+/* Using the example in the Associative Table Joins section as a guide, write a query that shows each department along with the name of the current manager for that department. */
+
+SELECT dept_name, concat(first_name, ' ', last_name) AS 'current_manager' FROM departments
+JOIN dept_manager USING (dept_no)
+LEFT JOIN employees USING (emp_no)
+WHERE to_date LIKE '9999%';
+
+
+/* Find the name of all departments currently managed by women. */
+
+SELECT dept_name, concat(first_name, ' ', last_name) AS 'current_manager' FROM departments
+JOIN dept_manager USING (dept_no)
+LEFT JOIN employees USING (emp_no)
+WHERE to_date LIKE '9999%' AND gender = 'F';
+
+/* Find the current titles of employees currently working in the Customer Service department. */
+
+SELECT title, count(title) FROM dept_emp
+JOIN titles USING (emp_no)
+WHERE dept_no = 'd009' AND titles.to_date > now()
+GROUP BY title;
+
+/* Find the current salary of all current managers. */
+
+SELECT dept_name, salary, concat(first_name, ' ', last_name) AS 'manager' FROM dept_manager
+JOIN salaries USING (emp_no)
+JOIN departments USING (dept_no)
+JOIN employees USING (emp_no)
+WHERE dept_manager.to_date > now() AND salaries.to_date > now();
+
+
+/* Find the number of employees in each department. */
+
+SELECT dept_no, count(dept_no) FROM `dept_emp`
+WHERE to_date > now()
+GROUP BY dept_no
