@@ -51,4 +51,22 @@ WHERE last_name LIKE '%q%' AND last_name NOT LIKE '%qu%';
 
 
 /* Create a new file named order_by_exercises.sql and copy in the contents of your exercise from the previous lesson */
+SELECT Unix_timestamp() - unix_timestamp('1979-10-16');
 
+SELECT datediff(CURDATE(), '1979-10-16');
+
+SELECT 1 + '4', '3' - 1, CONCAT('Here is a number: ', 123);
+
+SELECT CAST(123 AS CHAR), CAST('123' AS UNSIGNED);
+
+/* Update your queries for employees whose names start and end with 'E'. Use concat() to combine their first and last name together as a single column named full_name. */
+
+SELECT upper(CONCAT(first_name, ' ', last_name)) FROM employees
+WHERE last_name LIKE 'E%' AND last_name LIKE '%E';
+
+/* For your query of employees born on Christmas and hired in the 90s, use datediff() to find how many days they have been working at the company (Hint: You will also need to use NOW() or CURDATE()) */
+
+SELECT emp_no, first_name, last_name, datediff(curdate(), hire_date) AS days_with_company
+FROM employees
+WHERE hire_date LIKE '199%'
+AND birth_date LIKE '%-12-25'
