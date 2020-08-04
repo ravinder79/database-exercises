@@ -27,3 +27,15 @@ where Difficulty.score = Submissions.score
 group by submissions.hacker_id, name
 order by count(submissions.hacker_id) DESC, submissions.hacker_id) as t
 where t.count1>1;
+
+/*
+Write a query to output the start and end dates of projects listed by the number of days it took to complete the project in ascending order. If there is more than one project that have the same number of completion days, then order by the start date of the project.*/
+
+SELECT start_date, MIN(End_Date)
+FROM 
+    (SELECT Start_Date FROM Projects WHERE Start_Date NOT IN (SELECT End_Date FROM Projects)) a,
+    (SELECT end_date FROM PROJECTS WHERE end_date NOT IN (SELECT start_date FROM PROJECTS)) b
+where start_date < end_date
+GROUP BY start_date
+ORDER BY datediff(start_date, MIN(end_date)) DESC, start_date
+
