@@ -118,12 +118,27 @@ INSERT INTO `friends` (`id`, `name`, `activity`) VALUES
 
 
 
-select * from 
-(select activities.activity, IFNULL(count2,0) as activity_count from activities 
-left join (select activity, count(activity) as count2 from friends group by activity) as b
-ON activities.activity = b.activity) c
-where activity_count != (select max(count1) from (
-select activity, count(activity) count1 from friends
-group by activity) as a) and activity_count != (select min(count1) from (
-select activity, count(activity) count1 from friends
-group by activity) as a) ;
+SELECT *
+FROM
+  (SELECT activities.activity,
+          IFNULL(count2, 0) AS activity_count
+   FROM activities
+   LEFT JOIN
+     (SELECT activity,
+             count(activity) AS count2
+      FROM friends
+      GROUP BY activity) AS b ON activities.activity = b.activity) c
+WHERE activity_count !=
+    (SELECT max(count1)
+     FROM
+       (SELECT activity,
+               count(activity) count1
+        FROM friends
+        GROUP BY activity) AS a)
+  AND activity_count !=
+    (SELECT min(count1)
+     FROM
+       (SELECT activity,
+               count(activity) count1
+        FROM friends
+        GROUP BY activity) AS a) ;
