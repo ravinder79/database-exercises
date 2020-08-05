@@ -161,3 +161,14 @@ WHERE (dept_no, salary) IN
 JOIN dept_emp USING (emp_no)
 GROUP BY dept_no ) AND
 salaries.to_date > now();
+
+
+
+
+SELECT * FROM 
+(SELECT dept_no, AVG(salary) AS average_salary FROM employees
+JOIN salaries USING (emp_no)
+JOIN dept_emp USING (emp_no)
+WHERE salaries.to_date > now() 
+GROUP BY dept_no) AS s
+WHERE average_salary < 80000
