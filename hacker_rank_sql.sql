@@ -142,3 +142,22 @@ WHERE activity_count !=
                count(activity) count1
         FROM friends
         GROUP BY activity) AS a) ;
+
+
+/* max salary in dept*/
+
+SELECT  dept_no, max(salary) FROM `employees`
+JOIN salaries USING (emp_no)
+JOIN dept_emp USING (emp_no)
+WHERE salaries.to_date > now()
+GROUP BY dept_no
+ORDER BY max(salary);
+
+SELECT first_name, last_name, emp_no, dept_no, salary FROM employees
+JOIN salaries USING (emp_no)
+JOIN dept_emp USING (emp_no)
+WHERE (dept_no, salary) IN 
+(SELECT dept_no, max(salary) FROM salaries
+JOIN dept_emp USING (emp_no)
+GROUP BY dept_no ) AND
+salaries.to_date > now();
