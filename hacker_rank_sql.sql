@@ -81,3 +81,49 @@ Consider  and  to be two points on a 2D plane where  are the respective minimum 
 Query the Euclidean Distance between points  and  and format your answer to display  decimal digits.*/
 
 select round(sqrt((min(lat_n)-max(lat_n))* (min(lat_n)-max(lat_n)) + (min(long_w)-max(long_w)) * (min(long_w)-max(long_w))),4) from STATION
+
+CREATE TABLE IF NOT EXISTS `friends` (
+  `id` int(6) unsigned NOT NULL,
+  `name` varchar(3) NOT NULL,
+  `activity` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `activities` (
+  `id` int(6) unsigned NOT NULL,
+  `activity` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `friends` (`id`, `name`, `activity`) VALUES
+  ('1', 'a', 'Horseriding'),
+  ('2', 'b', 'reading'),
+  ('3', 'c', 'Horseriding'),
+  ('4', 'd', 'Horseriding'),
+   ('5', 'e', 'eating'),
+
+  ('6', 'f', 'eating'),
+  ('7', 'g', 'reading'),
+  ('8', 'h', 'sleeping');
+  
+ INSERT INTO `activities` (`id`, `activity`) VALUES
+  ('1', 'Horseriding'),
+  ('2',  'reading'),
+  ('3', 'eating'),
+  ('4', 'sleeping'),
+  ('5', 'running');
+ 
+  
+;
+
+
+
+select * from 
+(select activities.activity, IFNULL(count2,0) as activity_count from activities 
+left join (select activity, count(activity) as count2 from friends group by activity) as b
+ON activities.activity = b.activity) c
+where activity_count != (select max(count1) from (
+select activity, count(activity) count1 from friends
+group by activity) as a) and activity_count != (select min(count1) from (
+select activity, count(activity) count1 from friends
+group by activity) as a) ;
