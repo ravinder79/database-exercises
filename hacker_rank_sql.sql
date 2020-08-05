@@ -52,4 +52,32 @@ JOIN Packages p1 on p1.id = f.Friend_ID
 where p1.Salary > p.Salary
 order by p1.Salary
 
+/*
+Two pairs (X1, Y1) and (X2, Y2) are said to be symmetric pairs if X1 = Y2 and X2 = Y1.
+Write a query to output all such symmetric pairs in ascending order by the value of X.*/
 
+select f1.X, f1.Y from Functions f1
+INNER Join Functions f2 on f2.X = f1.Y and  f1.X = f2.Y
+group by f1.X, f1.y
+having  COUNT(f1.X)>1 or f1.X < f1.Y
+order by f1.X
+
+
+
+/*
+Write a query to print the hacker_id, name, and total score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the result by ascending hacker_id. Exclude all hackers with a total score of  from your resultuery here.
+*/
+select s.hacker_id, s.name, sum(s.max_score) from (
+select hacker_id, challenge_id, name, max(score) as max_score from Submissions
+left join hackers using (hacker_id)
+group by hacker_id, challenge_id, name) as s
+group by s.hacker_id, s.name
+having sum(s.max_score)>0
+order by sum(s.max_score) desc, s.hacker_id
+
+/*
+Consider  and  to be two points on a 2D plane where  are the respective minimum and maximum values of Northern Latitude (LAT_N)
+ and  are the respective minimum and maximum values of Western Longitude (LONG_W) in STATION.
+Query the Euclidean Distance between points  and  and format your answer to display  decimal digits.*/
+
+select round(sqrt((min(lat_n)-max(lat_n))* (min(lat_n)-max(lat_n)) + (min(long_w)-max(long_w)) * (min(long_w)-max(long_w))),4) from STATION
