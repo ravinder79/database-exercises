@@ -198,3 +198,40 @@ WHERE d.to_date > now() AND s.to_date > now() AND (dept_no, salary) IN
 JOIN salaries s1 ON e1.emp_no = s1.emp_no
 JOIN dept_emp d1 ON e1.emp_no = d1.emp_no
 GROUP BY d1.dept_no);
+
+/* Find all the employees with the same hire date as employee 101010 using a sub-query. */
+
+SELECT * FROM employees e
+WHERE hire_date IN (SELECT hire_date FROM employees e2 WHERE e2.emp_no = 101010);
+
+/* Find all the titles held by all employees with the first name Aamod. */
+SELECT title, count(title) FROM employees e
+JOIN titles USING (emp_no)
+WHERE first_name = 'Aamod'
+GROUP BY title;
+
+CREATE TABLE emps AS
+SELECT
+	e.*,
+	s.salary,
+	d.dept_name AS department,
+	d.dept_no
+FROM employees.employees e
+JOIN employees.salaries s USING (emp_no)
+JOIN employees.dept_emp de USING (emp_no)
+JOIN employees.departments d USING (dept_no);
+
+ALTER TABLE emps ADD  mean_salary FLOAT;
+ALTER TABLE emps ADD sd_salary FLOAT;
+ALTER TABLE emps ADD z_salary FLOAT;
+
+DROP TABLE salary_agg;
+
+CREATE TEMPORARY TABLE salary_agg AS 
+SELECT AVG(salary) AS mean , stddev(salary) AS sd FROM emps;
+
+SELECT * FROM salary_agg;
+
+UPDATE emps SET mean_salary = (SELECT mean FROM salary_agg);
+UPDATE emps SET sd_salary = (SELECT sd FROM salary_agg);
+UPDATE emps SET z_salary = (salary - mean_salary) / sd_salary;
