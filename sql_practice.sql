@@ -272,3 +272,20 @@ left join customers
 ON abc.outgoing = customers.number
 group by outgoing;
 
+
+-- Another solution
+
+select incoming, sum(cr1) from 
+(select * from 
+(select incoming, sum(duration) as cr1 from calls
+where date like '2020-07-%%'
+group by incoming) as inc
+
+union 
+
+select * from (
+select outgoing, sum(if (duration > 120, 500 + (duration-120)*2 , 500)) 
+as cr2 from calls
+where date like '2020-07-%%'
+group by outgoing) as outgo) as grouped
+group by incoming;
