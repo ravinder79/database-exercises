@@ -235,3 +235,40 @@ SELECT * FROM salary_agg;
 UPDATE emps SET mean_salary = (SELECT mean FROM salary_agg);
 UPDATE emps SET sd_salary = (SELECT sd FROM salary_agg);
 UPDATE emps SET z_salary = (salary - mean_salary) / sd_salary;
+
+
+
+select * from customers;
+
+select * from calls;
+
+select name, abc.outgoing, sum(cr1 + cr2)
+from (
+select incoming, outgoing, cr1,cr2 
+from 
+((select incoming, sum(duration) as cr1 from calls
+ where date like '2020-07-%%'
+group by incoming) as inc
+left  join
+(select outgoing, sum(if (duration > 120, 500 + (duration-120)*2 , 500)) as cr2
+from calls 
+where date like '2020-07-%%'
+group by outgoing) as outg ON
+inc.incoming = outg.outgoing)
+
+union
+
+(select ifnull(incoming,outgoing), ifnull(outgoing,incoming), ifnull(cr1,0),ifnull(cr2,0)  from 
+(select incoming, sum(duration) as cr1 from calls
+ where date like '2020-07-%%'
+group by incoming) as inc
+right  join
+(select outgoing, sum(if (duration > 120, 500 + (duration-120)*2 , 500)) as cr2
+from calls   
+ where date like '2020-07-%%'
+group by outgoing) as outg ON
+inc.incoming = outg.outgoing)) as abc
+left join customers
+ON abc.outgoing = customers.number
+group by outgoing;
+
