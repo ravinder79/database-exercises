@@ -172,3 +172,14 @@ JOIN dept_emp USING (emp_no)
 WHERE salaries.to_date > now() 
 GROUP BY dept_no) AS s
 WHERE average_salary < 80000
+
+
+/*Query the two cities in STATION with the shortest and longest CITY names, as well as their respective lengths 
+(i.e.: number of characters in the name). If there is more than one smallest or largest city, choose the one that
+ comes first when ordered alphabetically. */
+
+
+select city, length(city) from station
+order by length(city),city asc
+limit 1;
+
