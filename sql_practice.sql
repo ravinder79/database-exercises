@@ -289,3 +289,35 @@ as cr2 from calls
 where date like '2020-07-%%'
 group by outgoing) as outgo) as grouped
 group by incoming;
+
+/*write a query that shows each department along with the name of the current manager for that department.*/
+
+SELECT dept_name, concat(first_name, ' ', last_name) FROM departments
+LEFT JOIN dept_manager USING (dept_no)
+LEFT JOIN employees USING (emp_no)
+WHERE dept_manager.to_date > now();
+
+/*Find the name of all departments currently managed by women.*/
+SELECT dept_name FROM departments
+LEFT JOIN dept_manager USING (`dept_no`)
+LEFT JOIN employees USING (emp_no)
+WHERE dept_manager.to_date > now() AND gender = 'F';
+
+/*Find the current titles of employees currently working in the Customer Service department.*/
+SELECT title, count(*) FROM titles
+JOIN dept_emp USING (emp_no)
+WHERE titles.to_date> now() AND dept_no = 'd009'
+GROUP BY title;
+
+/*Find the current salary of all current managers.*/
+SELECT dept_no, salary FROM dept_manager
+LEFT JOIN salaries USING (emp_no)
+WHERE dept_manager.to_date > now() AND salaries.to_date > now();
+
+/*Find the smallest and largest current salary from the salaries table.*/
+SELECT salary FROM salaries
+WHERE to_date > now()
+ORDER BY salary DESC
+LIMIT 1;
+
+
