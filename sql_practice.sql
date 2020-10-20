@@ -321,3 +321,18 @@ ORDER BY salary DESC
 LIMIT 1;
 
 
+/* MYSQL */
+SELECT * FROM employees
+JOIN salaries USING (emp_no)
+ORDER BY salaries.from_date;
+
+
+SELECT * FROM salaries s1
+WHERE s1.from_date = (SELECT s2.emp_no FROM salaries s2 WHERE s2.emp_no = s1.emp_no ORDER BY s2.from_date DESC LIMIT 1);
+
+
+SELECT * FROM 
+(SELECT emp_no, min(from_date) AS min_date FROM salaries
+WHERE YEAR(from_date) = 1986
+GROUP BY `emp_no`) AS s1
+INNER JOIN salaries s2 ON (s2.emp_no = s1.emp_no AND s2.from_date = s1.min_date)
