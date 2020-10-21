@@ -335,4 +335,9 @@ SELECT * FROM
 (SELECT emp_no, min(from_date) AS min_date FROM salaries
 WHERE YEAR(from_date) = 1986
 GROUP BY `emp_no`) AS s1
-INNER JOIN salaries s2 ON (s2.emp_no = s1.emp_no AND s2.from_date = s1.min_date)
+INNER JOIN salaries s2 ON (s2.emp_no = s1.emp_no AND s2.from_date = s1.min_date);
+
+/*Use Unbounded Preceding to make sure you don't include extra rows if 2 rows evaluate to the same thing*/
+select 
+name, sum(weight) over (order by weight DESC ROWS between unbounded preceding and current row) as running_total_weight
+ from cats 
