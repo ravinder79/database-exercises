@@ -359,3 +359,14 @@ Consider a race where 2 people finished first. Dense_rank assigns the next perso
 select 
 dense_rank() over (order by age DESC) as ranking, name, age
  from cats order by ranking, name
+
+/* percent_rank() scores everything from 0 - 1 allowing us to generate distributions or percentiles */
+
+select 
+name, weight, percent_rank() over (order by weight)*100 as percent  
+ from cats order by weight
+
+/* cume_dist() is similar to percent_rank(). The difference is the first entry in cume_dist is not 0.*/
+select 
+name, weight, cast (cume_dist() over (order by weight)*100 as integer) as percentile
+ from cats order by weight
