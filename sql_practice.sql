@@ -351,3 +351,11 @@ row_number()over (order by color, name), name, color
  select 
 rank() over (order by weight DESC, name) as ranking, weight, name
  from cats 
+
+
+/*dense_rank() differs from rank() as it increases sequentially.
+Consider a race where 2 people finished first. Dense_rank assigns the next person 2nd. Rank assigns them 3rd. */
+
+select 
+dense_rank() over (order by age DESC) as ranking, name, age
+ from cats order by ranking, name
