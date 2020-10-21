@@ -341,3 +341,13 @@ INNER JOIN salaries s2 ON (s2.emp_no = s1.emp_no AND s2.from_date = s1.min_date)
 select 
 name, sum(weight) over (order by weight DESC ROWS between unbounded preceding and current row) as running_total_weight
  from cats 
+
+/*row_number() lets us index the ordered items. Each number is unique */
+ select 
+row_number()over (order by color, name), name, color 
+ from cats 
+
+/* rank() lets us index the ordered items. Unlike row_number() it allows duplicate numbers  */
+ select 
+rank() over (order by weight DESC, name) as ranking, weight, name
+ from cats 
