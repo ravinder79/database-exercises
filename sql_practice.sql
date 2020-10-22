@@ -370,3 +370,17 @@ name, weight, percent_rank() over (order by weight)*100 as percent
 select 
 name, weight, cast (cume_dist() over (order by weight)*100 as integer) as percentile
  from cats order by weight
+
+/* ntile() lets us divide our data into percentiles/quartiles. 
+If we only need to see the lowest X% this can be done via ntile() */
+ select 
+name, weight, ntile(4) over (order by weight)
+ from cats order by weight
+
+ 
+ /* lag() lets us compare to the previous rows [and lead() the next rows] [min() also works] 
+It is useful for looking for strange step ups/downs in data */
+
+ select 
+name, weight,
+coalesce(weight - lag(weight, 1) over (order by weight), 0) as weight_to_lose FROM cats order by weight
