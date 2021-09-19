@@ -86,3 +86,86 @@ select emp_no, avg(salary) from salaries
 where to_date > curdate()
 group by emp_no
 having avg(salary) between 80000 and 90000;
+
+
+
+/* Joins */
+-- write a query that shows each department along with the name of the current manager for that department.
+
+select dept_name, concat (first_name, ' ', last_name) from departments as d
+Join dept_manager as dm ON d.dept_no = dm.dept_no
+Join employees using(emp_no)
+where dm.to_date LIKE '9999%'
+order by dept_name;
+
+-- Find the name of all departments currently managed by women.
+
+select dept_name, concat (first_name, ' ', last_name) from departments as d
+Join dept_manager as dm ON d.dept_no = dm.dept_no
+Join employees using(emp_no)
+where dm.to_date LIKE '9999%' AND gender = 'F'
+order by dept_name;
+
+-- Find the current titles of employees currently working in the Customer Service department.
+
+select title, count(*) from titles as t
+join dept_emp as de ON t.emp_no = de.emp_no
+join departments as d on d.dept_no = de.dept_no
+Where t.to_date LIKE '9999%'
+AND de.to_date LIKE '9999%'
+AND d.dept_name LIKE 'Customer%'
+group by title;
+
+-- Find the current salary of all current managers.
+
+select salary, concat(first_name, ' ', last_name), dept_name from salaries as s
+join employees using(emp_no)
+join dept_manager using(emp_no)
+join departments using(dept_no)
+where dept_manager.to_date > curdate()
+AND s.to_date > now()
+order by dept_name;
+
+-- Find the number of current employees in each department.
+
+select dept_no, dept_name, count(*) from dept_emp as de
+join departments using(dept_no)
+where de.to_date > now()
+group by dept_name
+order by dept_no;
+
+-- Which department has the highest average salary? Hint: Use current not historic information.
+select d.dept_name, avg(salary) from salaries s
+join dept_emp de using(emp_no)
+join departments d ON d.dept_no = de.dept_no
+where s.to_date > now()
+AND de.to_date > now()
+group by de.dept_no
+order by avg(salary) desc
+limit 1;
+
+-- Who is the highest paid employee in the Marketing department?
+
+
+select dept_name, s.emp_no, first_name, last_name, salary from dept_emp as de
+join departments d using(dept_no)
+join salaries s on s.emp_no = de.emp_no
+join employees e on e.emp_no = de.emp_no
+where de.to_date > now()
+and s.to_date > now() 
+and d.dept_name LIKE 'Marketing'
+order by salary DESC
+limit 1;
+
+-- Which current department manager has the highest salary?
+
+select first_name, last_name, dept_name, salary from dept_manager
+join departments d using(dept_no)
+join salaries s using(emp_no)
+join employees using(emp_no)
+where s.to_date > now()
+and dept_manager.to_date > now()
+order by salary DESC
+limit 1;
+
+
