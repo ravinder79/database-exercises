@@ -169,3 +169,26 @@ order by salary DESC
 limit 1;
 
 
+-- Find all the current employees with the same hire date as employee 101010 using a sub-query.
+
+select * 
+from  employees
+join salaries using(emp_no)
+WHERE hire_date = (select hire_date from employees where emp_no = 101010 )
+AND salaries.to_date > now();
+
+
+-- Find all the titles ever held by all current employees with the first name Aamod.
+select title from titles
+where emp_no IN 
+(select emp_no from titles
+join employees using(emp_no)
+where titles.to_date > now()
+AND first_name = 'Aamod');
+
+-- How many people in the employees table are no longer working for the company? Give the answer in a comment in your code.
+
+select * from employees
+where emp_no NOT IN (select emp_no from titles
+where to_date like '9999%');
+
