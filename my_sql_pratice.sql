@@ -192,3 +192,24 @@ select * from employees
 where emp_no NOT IN (select emp_no from titles
 where to_date like '9999%');
 
+
+-- BONUS: How many duplicate usernames are there? 
+
+SELECT count(username_counts.number_of_duplicates), sum(username_counts.number_of_duplicates)
+FROM(
+SELECT 
+	LOWER(
+			CONCAT(
+				SUBSTR(first_name, 1, 1),
+				SUBSTR(last_name, 1, 4),
+				'_',
+				SUBSTR(birth_date, 6, 2),
+				SUBSTR(birth_date, 3, 2)
+				)
+			) AS username,
+	COUNT(*) AS number_of_duplicates
+FROM employees
+GROUP BY username
+having number_of_duplicates >1
+ORDER BY number_of_duplicates DESC) as username_counts;
+
