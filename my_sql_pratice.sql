@@ -213,3 +213,189 @@ GROUP BY username
 having number_of_duplicates >1
 ORDER BY number_of_duplicates DESC) as username_counts;
 
+
+
+-- Find the historic average salary for all employees. Now determine the current average salary.
+
+SELECT avg(salary) from salaries;
+
+SELECT avg(salary) from salaries
+where salaries.to_date > now();
+
+
+-- Now find the historic average salary for each employee. Reminder that when you hear "for each" in the problem statement, you'll probably be grouping by that exact column.
+
+select emp_no, avg(salary) from salaries
+group by emp_no;
+
+
+-- Find the current average salary for each employee.
+
+select emp_no, avg(salary) from salaries
+where salaries.to_date > now()
+group by emp_no;
+
+-- Find the maximum salary for each current employee.
+select emp_no, max(salary) from salaries
+where salaries.to_date > now()
+group by emp_no;
+
+-- Now find the max salary for each current employee where that max salary is greater than $150,000.
+select emp_no, max(salary) from salaries
+where salaries.to_date > now()
+group by emp_no
+having max(salary) > 150000;
+
+-- Find the current average salary for each employee where that average salary is between $80k and $90k.
+
+select emp_no, avg(salary) from salaries
+where salaries.to_date > now()
+group by emp_no
+having avg(salary) BETWEEN 80000 and 90000;
+
+
+-- Join exercises
+
+-- Using the example in the Associative Table Joins section as a guide, write a query that shows each department along with the name of the current manager for that department.
+
+SELECT dept_name, concat(first_name, ' ', last_name) as 'department manager' 
+FROM dept_manager as dm
+JOIN employees using(emp_no)
+JOIN departments d using(dept_no)
+where dm.to_date > now()
+order by dept_name;
+
+SELECT dept_name, concat(first_name, ' ', last_name) as 'department manager' 
+FROM employees as e
+JOIN dept_manager dm using(emp_no)
+JOIN departments d using(dept_no)
+where dm.to_date > now()
+order by dept_name;
+
+-- Find the name of all departments currently managed by women.
+
+SELECT dept_name, concat(first_name, ' ', last_name) as 'department manager' 
+FROM dept_manager as dm
+JOIN employees using(emp_no)
+JOIN departments d using(dept_no)
+where dm.to_date > now()
+and gender = 'F'
+order by dept_name;
+
+-- Find the current titles of employees currently working in the Customer Service department.
+
+select title, count(*)
+from titles t
+join dept_emp de using(emp_no)
+join departments d using(dept_no)
+where t.to_date > now()
+and de.to_date > now()
+and d.dept_name LIKE 'Cust%'
+group by t.title;
+
+
+-- Find the current salary of all current managers.
+SELECT dept_name, salary, concat(first_name, ' ', last_name)
+from dept_manager dm
+join employees e using(emp_no)
+LEFT join salaries s using(emp_no)
+join departments d using(dept_no)
+where dm.to_date > now()
+AND s.to_date > now()
+order by dept_name;
+
+
+SELECT dept_name, salary, first_name
+from salaries s
+join dept_manager dm using(emp_no)
+join departments d using(dept_no)
+join employees e using(emp_no)
+where dm.to_date > now()
+AND s.to_date > now()
+order by dept_name;
+
+-- Find the number of current employees in each department.
+SELECT dept_no, dept_name, count(*)
+FROM dept_emp de
+join departments d using(dept_no)
+where de.to_date > now()
+group by dept_name
+order by dept_no;
+
+
+-- Which department has the highest average salary? Hint: Use current not historic information.
+
+select dept_name, avg(salary) from
+salaries s
+join dept_emp de using(emp_no)
+join departments d using(dept_no)
+where de.to_date>now()
+and s.to_date > now()
+group by dept_name
+
+
+order by avg(salary) DESC
+Limit 1;
+
+-- Who is the highest paid employee in the Marketing department?
+
+select first_name, last_name, salary 
+from salaries s
+join employees e using(emp_no)
+join dept_emp de using(emp_no)
+join departments d using(dept_no)
+where s.to_date > now()
+AND de.to_date > now()
+AND dept_name LIKE 'Marketing%'
+order by salary DESC
+limit 1;
+
+-- Which current department manager has the highest salary?
+select first_name, last_name, dept_name, salary
+from salaries s
+join dept_manager dm using(emp_no)
+join departments d using(dept_no)
+join employees e using(emp_no)
+where s.to_date > now()
+and dm.to_date > now()
+order by salary desc
+limit 1;
+
+-- Bonus Find the names of all current employees, their department name, and their current manager's name.
+
+select concat(managers.first_name,managers.last_name) as 'manager_name', concat(employees.first_name, ' ', employees.last_name) as employees_name, d.dept_name
+from employees as managers
+join dept_manager dm using(emp_no)
+join departments d using(dept_no)
+join dept_emp de using(dept_no)
+join employees on de.emp_no = employees.emp_no
+where de.to_date > now()
+and dm.to_date > now();
+
+
+-- Bonus Who is the highest paid employee within each department.
+select first_name, last_name, salary, dept_name, dept_no,
+max(salary) OVER(partition by dept_no) as 'max salary'
+from salaries s
+join employees e using(emp_no)
+join dept_emp de using(emp_no)
+join departments using(dept_no)
+where s.to_date > now()
+and de.to_date > now();
+
+
+select salary, dept_name, first_name, last_name
+from employees e
+join salaries sa using(emp_no)
+join dept_emp using(emp_no)
+join departments using(dept_no)
+WHERE salary IN 
+(select max(salary)
+from salaries s
+join employees e using(emp_no)
+join dept_emp de using(emp_no)
+join departments using(dept_no)
+where s.to_date > now()
+and de.to_date > now()
+group by dept_name);
+
