@@ -372,6 +372,17 @@ join employees on de.emp_no = employees.emp_no
 where de.to_date > now()
 and dm.to_date > now();
 
+-- Another way - start with dept_emp - for employees. Later self join with employees to bring in managers.
+select concat(e.first_name, " ",e.last_name) as "manager_name", dept_name, concat(managers.first_name, " ", managers.last_name) as "Employee Name"
+from dept_emp de
+join departments using(dept_no)
+join employees e using(emp_no)
+join dept_manager dm using(dept_no)
+join employees as managers on dm.emp_no = managers.emp_no
+where dm.to_date > now()
+AND de.to_date > now();
+
+
 
 -- Bonus Who is the highest paid employee within each department.
 select first_name, last_name, salary, dept_name, dept_no,
